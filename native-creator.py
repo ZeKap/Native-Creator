@@ -29,7 +29,7 @@ def getWebName(url:str) -> str:
 
 def getAppName(folderName:str) -> str:
     """get the name of the app from folder name"""
-    return folderName.split('.com')[0]+'.com'
+    return folderName.split('-linux-x64')[0]
 
 
 def createWebFolder(url:str) -> str:
