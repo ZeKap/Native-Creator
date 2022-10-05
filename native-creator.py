@@ -20,6 +20,7 @@ def parse():
     global args
     args = parser.parse_args()
 
+
 def getWebName(url:str) -> str:
     """get the name of a website from it's url"""
     # get what's between protocol and firt '/' if any
