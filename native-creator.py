@@ -4,6 +4,9 @@ import shutil
 from shutil import which
 
 
+def isNotBlank(s):
+    return bool(s and not s.isspace())
+
 def checkNativefier():
     """check that nativefier exists in os"""
     if(which('nativefier') == None):
@@ -17,6 +20,7 @@ def parse():
     groupParse = parser.add_mutually_exclusive_group(required=True)
     groupParse.add_argument('-a', '--add', help='Add a website')
     groupParse.add_argument('-r', '--remove', action='store_true',help='Remove a website')
+    parser.add_argument('-l', '--lang', help='Choose language')
     global args
     args = parser.parse_args()
 
@@ -32,12 +36,14 @@ def getAppName(folderName:str) -> str:
     return folderName.split('-linux-x64')[0]
 
 
-def createWebFolder(url:str) -> str:
+def createWebFolder(url:str, lang:str="") -> str:
     """add a website from url"""
     webName = getWebName(url)
     path = os.path.expanduser('~')+'/Nativier/'
     #generate command for os
     commandAdd = 'nativefier '+url+' '+path+' --name '+webName
+    if(isNotBlank(lang)):
+        commandAdd += ' --lang '+lang
     os.system(commandAdd)
     return str(path+url+"-linux-x64")
 
@@ -106,7 +112,8 @@ if(__name__ == '__main__'):
     checkNativefier()
     parse()
     if(args.add):
-        path = createWebFolder(args.add)
+        if(args.lang): path = createWebFolder(args.add, args.lang)
+        else: path = createWebFolder(args.add)
         createWebShortcut(path, getWebName(args.add))
     elif(args.remove):
         folder = chooseWebFolder()
