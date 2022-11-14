@@ -21,6 +21,7 @@ def parse():
     groupParse.add_argument('-a', '--add', help='Add a website')
     groupParse.add_argument('-r', '--remove', action='store_true',help='Remove a website')
     parser.add_argument('-l', '--lang', help='Choose language')
+    parser.add_argument('--verbose', action='store_true', help='Verbose mode')
     global args
     args = parser.parse_args()
 
@@ -36,14 +37,15 @@ def getAppName(folderName:str) -> str:
     return folderName.split('-linux-x64')[0]
 
 
-def createWebFolder(url:str, lang:str="") -> str:
+def createWebFolder(url:str, lang:str="", verb:bool=False) -> str:
     """add a website from url"""
     webName = getWebName(url)
     path = os.path.expanduser('~')+'/Nativier/'
     #generate command for os
     commandAdd = 'nativefier '+url+' '+path+' --name '+webName
-    if(isNotBlank(lang)):
-        commandAdd += ' --lang '+lang
+    if(isNotBlank(lang) and not(lang is None)): commandAdd += ' --lang '+lang
+    if(verb): commandAdd += ' --verbose'
+    print(commandAdd)
     os.system(commandAdd)
     return str(path+url+"-linux-x64")
 
@@ -112,8 +114,8 @@ if(__name__ == '__main__'):
     checkNativefier()
     parse()
     if(args.add):
-        if(args.lang): path = createWebFolder(args.add, args.lang)
-        else: path = createWebFolder(args.add)
+        #print(args)
+        path = createWebFolder(args.add, args.lang, args.verbose)
         createWebShortcut(path, getWebName(args.add))
     elif(args.remove):
         folder = chooseWebFolder()
